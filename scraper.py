@@ -115,6 +115,11 @@ class Scraper:
         self.cross_origin = cross_origin
         self.base_dir = base_dir
 
+    def same_origin(self, url: str) -> bool:
+        """True if url is relative or has same domain"""
+        domain = urlparse(url).netloc
+        return domain == "" or domain == urlparse(self.base_url).netloc
+
     async def scrape(self):
         await self.scrape_all([self.base_url])
 
@@ -131,6 +136,9 @@ class Scraper:
     async def scrape_all(self, urls: list[str]):
         """Given a list of urls, concurrently fetches and scrapes them.
         If this results in new urls being found, these are fetched as well."""
+
+        if not self.cross_origin:
+            urls = [url for url in urls if self.same_origin(url)]
 
         tasks = [asyncio.to_thread(self.fetch_and_store, url) for url in urls]
         for task in asyncio.as_completed(tasks):
