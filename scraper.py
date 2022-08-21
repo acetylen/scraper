@@ -66,8 +66,7 @@ class LinkExtractor(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
         """Search tag for a href, adding it to found links if it exists."""
-        if attrs is None:
-            return
+
         href = dict(attrs).get("href")
         if href is None:
             return

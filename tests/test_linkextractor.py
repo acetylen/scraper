@@ -6,9 +6,6 @@ class LinkExtractorTestCase(unittest.TestCase):
     def setUp(self):
         self.x = LinkExtractor(baseurl="https://example.url")
 
-    def tearDown(self):
-        self.x.clear()
-
     def test_normalise_url_absolute(self):
         result = self.x.normalise_url("https://foo.bar/baz#quux")
         self.assertEqual(result, "https://foo.bar/baz")
@@ -16,6 +13,10 @@ class LinkExtractorTestCase(unittest.TestCase):
     def test_normalise_url_relative(self):
         result = self.x.normalise_url("/baz#quux")
         self.assertEqual(result, "https://example.url/baz")
+
+    def test_normalise_url_trailing_slash(self):
+        result = self.x.normalise_url("/hello/")
+        self.assertEqual(result, "https://example.url/hello")
 
     def test_parse_html(self):
 
