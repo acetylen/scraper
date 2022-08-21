@@ -39,4 +39,6 @@ as they tend to become less effective and more confusing when reduced to just
 another control flow mechanism.
 
 Formatting is done using `black` and `isort`, and linting is done using `flake8`
-and `mypy`. Test coverage was done using `coverage.py`.
+(using the `pyproject-flake8` wrapper `pflake8` to read `black`-compatible
+settings from the pyproject-file) and `mypy`. 
+Test coverage was done using `coverage.py`.
