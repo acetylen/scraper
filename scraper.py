@@ -21,7 +21,7 @@ class LinkExtractor(HTMLParser):
 
     def __init__(self, baseurl: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.found_links = set()
+        self.found_links: set[str] = set()
         self.baseurl = baseurl
 
     def normalise_url(self, url: str) -> str:
