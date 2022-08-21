@@ -13,7 +13,27 @@ Steps:
 __version__ = "0.0.1"
 
 from html.parser import HTMLParser
+from pathlib import Path
 from urllib.parse import urlparse
+from urllib.request import urlopen, URLError, HTTPError
+
+
+def to_path(url: str, base: str = None) -> Path:
+    """Given a {url}, convert it to a file system path.
+    If {base} is given, prepend it to the url path."""
+
+    here = Path.cwd()
+    if base:
+        # appending as-is allows us to append an absolute path
+        here /= base
+
+    parts = urlparse(url)
+
+    # special case for index pages
+    if parts.path in ("", "/"):
+        parts = parts._replace(path="/index.html")
+
+    return here / parts.netloc / parts.path[1:]
 
 
 class LinkExtractor(HTMLParser):
@@ -52,12 +72,30 @@ class LinkExtractor(HTMLParser):
 
         self.found_links.add(self.normalise_url(href))
 
-
-
     def extract(self) -> set[str]:
         """Returns unique links found so far."""
 
         return self.found_links
+
+
+def fetch(url: str) -> bytes:
+    """Given a url, fetch the resource and return it."""
+
+    try:
+        with urlopen(url) as r:
+            html = r.read()
+    except (HTTPError, URLError) as err:
+        print(f"Error fetching {url}: {err}")
+        return None
+    return html
+
+
+def store(url: str, html: bytes, base: str = None):
+    """Save a web resource to a file, optionally under the {base} directory"""
+    path = to_path(url, base)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    path.write_bytes(html)
 
 
 async def main():
