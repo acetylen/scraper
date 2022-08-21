@@ -12,6 +12,21 @@ This tool is distributed as a single file, which means it can be run by
 ## Usage
 
 ```shell
+$ scrape -h
+usage: scrape [-h] [--cross-origin] [-o OUTPUT_DIR] url
+
+Scraper is a website scraper and downloader. It parses the resource at the provided link for urls, then
+concurrently downloads the target resources and repeats the process until it finds no more links.
+
+positional arguments:
+  url                   URL to fetch
+
+options:
+  -h, --help            show this help message and exit
+  --cross-origin        also fetch resources from different domains
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        base directory for storing fetched resources
+
 $ scrape https://example.org --output-dir example
 $ tree example
 example/

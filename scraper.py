@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
 
 """Scraper is a website scraper and downloader.
-
-Steps:
-    1. Fetch resource at url.
-    2. Save resource to disk.
-    2. Parse downloaded file.
-    3. Check if file contains any new urls.
-        3a, if yes, go to 1.
-        3b, if no, we're done.
+It parses the resource at the provided link for urls, then concurrently downloads
+the target resources and repeats the process until it finds no more links.
 """
-__version__ = "0.0.1"
+__version__ = "1.0.0"
 
 import asyncio
 from functools import cache
