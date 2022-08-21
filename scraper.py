@@ -13,6 +13,7 @@ Steps:
 __version__ = "0.0.1"
 
 import asyncio
+from functools import cache
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
@@ -115,6 +116,7 @@ class Scraper:
         self.cross_origin = cross_origin
         self.base_dir = base_dir
 
+    @cache
     def same_origin(self, url: str) -> bool:
         """True if url is relative or has same domain"""
         domain = urlparse(url).netloc
