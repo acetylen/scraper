@@ -136,6 +136,7 @@ class Scraper:
     async def scrape_all(self, urls: list[str]):
         """Given a list of urls, concurrently fetches and scrapes them.
         If this results in new urls being found, these are fetched as well."""
+        self.seen_links |= set(urls)
 
         if not self.cross_origin:
             urls = [url for url in urls if self.same_origin(url)]
