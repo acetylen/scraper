@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""ScraPyNc is a website scraper.
+"""Scraper is a website scraper and downloader.
 
 Steps:
     1. Find out base URL and create a directory.
@@ -9,6 +9,7 @@ Steps:
     4. For each unique url found, go to 2.
     5. When no new urls have been found, we're done.
 """
+__version__ = "0.0.1"
 
 from html.parser import HTMLParser
 from urllib.parse import urlparse
@@ -48,10 +49,26 @@ class LinkExtractor(HTMLParser):
 
         link = attrdict["href"]
 
-        self.found_links.add(normalise_url(link))
+        self.found_links.add(self.normalise_url(link))
 
     def extract(self) -> list[str]:
         """Returns a list of unique links found so far."""
 
         return list(self.found_links)
 
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("url", help="URL to fetch")
+
+    args = parser.parse_args()
+
+    raise NotImplementedError()
+
+
+if __name__ == "__main__":
+    main()

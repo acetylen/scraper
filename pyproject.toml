@@ -1,13 +1,16 @@
 [project]
-name = "scrapync"
+name = "scraper"
 description = "Scraper in python using asyncio"
 dynamic = ["version"]
 readme = "README.md"
 
+[project.scripts]
+scrape = "scraper:main"
+
 
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build-meta"
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
-version = { attr = "scrapync.__version__" }
+version = { attr = "scraper.__version__" }
