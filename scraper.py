@@ -26,17 +26,19 @@ class LinkExtractor(HTMLParser):
 
     def normalise_url(self, url: str) -> str:
         """
-        Remove fragment part of {url} so that links to the same page are identical.
-        If url is relative, copy scheme and location from baseurl.
+        Clean up {url} to remove duplicate entries.
+        Removes fragment and trailing /..
+        If {url} is relative, copy scheme and location from {self.baseurl}.
         """
 
-        # note: _replace looks like a private interface, but it's not. It's a
-        # consequence of urlparse's return type being a subclass of namedtuple.
+        # note: _replace looks like a private interface in order for it to not
+        # look like a namedtuple field (ParseResult is a subclass)
         link = urlparse(url)._replace(fragment="")
+        if link.path.endswith("/"):
+            link = link._replace(path=link.path[:-1])
         if not link.netloc:
             base = urlparse(self.baseurl)
-            link._replace(scheme=base.scheme)
-            link._replace(netloc=base.netloc)
+            link = link._replace(scheme=base.scheme, netloc=base.netloc)
 
         return link.geturl()
 
