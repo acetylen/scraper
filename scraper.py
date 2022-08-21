@@ -33,7 +33,7 @@ def to_path(url: str, base: str = None) -> Path:
 
 
 def fetch(url: str) -> bytes:
-    """Given a {urlp, fetch the resource and return it."""
+    """Given a {url}, fetch the resource and return it."""
 
     try:
         with urlopen(url) as r:
