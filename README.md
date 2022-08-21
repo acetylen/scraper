@@ -39,4 +39,4 @@ as they tend to become less effective and more confusing when reduced to just
 another control flow mechanism.
 
 Formatting is done using `black` and `isort`, and linting is done using `flake8`
-and `mypy`.
+and `mypy`. Test coverage was done using `coverage.py`.
