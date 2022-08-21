@@ -3,11 +3,12 @@
 """Scraper is a website scraper and downloader.
 
 Steps:
-    1. Find out base URL and create a directory.
-    2. Fetch url.
-    3. Parse downloaded file.
-    4. For each unique url found, go to 2.
-    5. When no new urls have been found, we're done.
+    1. Fetch resource at url.
+    2. Save resource to disk.
+    2. Parse downloaded file.
+    3. Check if file contains any new urls.
+        3a, if yes, go to 1.
+        3b, if no, we're done.
 """
 __version__ = "0.0.1"
 
