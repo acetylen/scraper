@@ -55,5 +55,25 @@ another control flow mechanism.
 
 Formatting is done using `black` and `isort`, and linting is done using `flake8`
 (using the `pyproject-flake8` wrapper `pflake8` to read `black`-compatible
-settings from the pyproject-file) and `mypy`. 
-Test coverage was done using `coverage.py`.
+settings from the pyproject-file) and `mypy`.
+
+Test coverage was done using `coverage.py`, however coverage is about 60% since
+testing functionality that relies on an internet connection is too fiddly and
+annoying for a quick project such as this.
+
+## Future work
+
+There is currently no validation being done on the input. Breaking the tool by
+feeding it bad URLs is very simple.
+
+There are no checks for disk i/o, so overwriting important files is just a
+matter of inputting a bad URL.
+
+Handling of paths that are not files (like how foo.bar/ points to foo.bar/index.html)
+is currently very simplistic, so some files may be missed.
+
+The tool currently pulls every `href` it can find, no matter the protocol, so
+`mailto` links get pulled in as well, and result in error messages.
+
+Speaking of errors, the only error handling done on failed requests is to skip them.
+Ideally there should be a retry mechanic and a protocol distinction.
