@@ -12,6 +12,7 @@ Steps:
 """
 __version__ = "0.0.1"
 
+import asyncio
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
@@ -98,6 +99,56 @@ def store(url: str, html: bytes, base: str = None):
     path.write_bytes(html)
 
 
+class Scraper:
+    """Scrapes all urls it finds"""
+
+    def __init__(
+        self,
+        base_url: str,
+        cross_origin: bool = False,
+        base_dir: str = None,
+    ):
+        self.seen_links: set[str] = set()
+        self.extractor = LinkExtractor(base_url)
+        self.base_url = base_url
+        self.loop = asyncio.get_running_loop()
+        self.cross_origin = cross_origin
+        self.base_dir = base_dir
+
+    async def scrape(self):
+        await self.scrape_all([self.base_url])
+
+    def fetch_and_store(self, url: str) -> bytes:
+
+        print(f"fetching {url}...")
+        html = fetch(url)
+
+        if html:
+            store(url, html, self.base_dir)
+
+        return html
+
+    async def scrape_all(self, urls: list[str]):
+        """Given a list of urls, concurrently fetches and scrapes them.
+        If this results in new urls being found, these are fetched as well."""
+
+        tasks = [asyncio.to_thread(self.fetch_and_store, url) for url in urls]
+        for task in asyncio.as_completed(tasks):
+            html = await task
+            if html:
+                text = html.decode()
+                self.extractor.feed(text)
+
+        links = self.extractor.extract()
+
+        # filter out already visited links before running the next batch
+        new_links = links - self.seen_links
+        self.seen_links |= links
+
+        if new_links:
+            await self.scrape_all(list(new_links))
+
+
 async def main():
     import argparse
 
@@ -116,7 +167,12 @@ async def main():
 
     args = parser.parse_args()
 
-    raise NotImplementedError()
+    scraper = Scraper(
+        base_url=args.url,
+        cross_origin=args.cross_origin,
+        base_dir=args.output_dir,
+    )
+    await scraper.scrape()
 
 
 def entrypoint():
