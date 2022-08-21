@@ -33,7 +33,7 @@ def to_path(url: str, base: str = None) -> Path:
 
 
 def fetch(url: str) -> bytes:
-    """Given a url, fetch the resource and return it."""
+    """Given a {urlp, fetch the resource and return it."""
 
     try:
         with urlopen(url) as r:
@@ -45,7 +45,8 @@ def fetch(url: str) -> bytes:
 
 
 def store(url: str, html: bytes, base: str = None):
-    """Save a web resource to a file, optionally under the {base} directory"""
+    """Save {html} data to a file, creating a path from the provided {url},
+    optionally under the {base} directory."""
     path = to_path(url, base)
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -61,11 +62,9 @@ class LinkExtractor(HTMLParser):
         self.baseurl = baseurl
 
     def normalise_url(self, url: str) -> str:
-        """
-        Clean up {url} to remove duplicate entries.
-        Removes fragment and trailing /..
-        If {url} is relative, copy scheme and location from {self.baseurl}.
-        """
+        """Clean up {url} to remove duplicate entries by removing
+        fragments and trailing slashes.
+        If {url} is relative, copy scheme and location from {self.baseurl}."""
 
         # note: _replace looks like a private interface in order for it to not
         # look like a namedtuple field (ParseResult is a subclass)
@@ -79,7 +78,8 @@ class LinkExtractor(HTMLParser):
         return link.geturl()
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
-        """Search tag for a href, adding it to found links if it exists."""
+        """Search {tag} for a "href" attribute, adding its value to {self.found_links}
+        if it exists."""
 
         href = dict(attrs).get("href")
         if href is None:
@@ -111,15 +111,16 @@ class Scraper:
 
     @cache
     def same_origin(self, url: str) -> bool:
-        """True if url is relative or has same domain"""
+        """True if {url} is relative or has same domain as {self.base_url}."""
         domain = urlparse(url).netloc
         return domain == "" or domain == urlparse(self.base_url).netloc
 
     async def scrape(self):
+        """Scrape {self.base_url}."""
         await self.scrape_all([self.base_url])
 
     def fetch_and_store(self, url: str) -> bytes:
-
+        """Fetches {url}, then stores and returns it."""
         print(f"fetching {url}...")
         html = fetch(url)
 
@@ -129,7 +130,7 @@ class Scraper:
         return html
 
     async def scrape_all(self, urls: list[str]):
-        """Given a list of urls, concurrently fetches and scrapes them.
+        """Given a list of {urls}, concurrently fetches and scrapes them.
         If this results in new urls being found, these are fetched as well."""
         self.seen_links |= set(urls)
 
