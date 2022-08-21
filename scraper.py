@@ -42,22 +42,22 @@ class LinkExtractor(HTMLParser):
 
         return link.geturl()
 
-    def handle_starttag(self, tagname: str, attrs: list[tuple[str, str]]):
-        """Search every tag for any of the attributes in self.attrs, adding
-        it to found links if it's non-empty."""
-
-        attrdict = dict(attrs)
-        if "href" not in attrdict:
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
+        """Search tag for a href, adding it to found links if it exists."""
+        if attrs is None:
+            return
+        href = dict(attrs).get("href")
+        if href is None:
             return
 
-        link = attrdict["href"]
+        self.found_links.add(self.normalise_url(href))
 
-        self.found_links.add(self.normalise_url(link))
 
-    def extract(self) -> list[str]:
-        """Returns a list of unique links found so far."""
 
-        return list(self.found_links)
+    def extract(self) -> set[str]:
+        """Returns unique links found so far."""
+
+        return self.found_links
 
 
 async def main():
