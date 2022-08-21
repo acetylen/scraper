@@ -5,7 +5,7 @@ dynamic = ["version"]
 readme = "README.md"
 
 [project.scripts]
-scrape = "scraper:main"
+scrape = "scraper:entrypoint"
 
 
 [build-system]

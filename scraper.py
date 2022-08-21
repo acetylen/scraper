@@ -57,11 +57,19 @@ class LinkExtractor(HTMLParser):
         return list(self.found_links)
 
 
-def main():
+async def main():
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--cross-origin",
+        action="store_true",
+        help="also fetch resources from different domains",
+    )
+    parser.add_argument(
+        "-o",
+        "--output-dir",
+        help="base directory for storing fetched resources",
     )
     parser.add_argument("url", help="URL to fetch")
 
@@ -70,5 +78,10 @@ def main():
     raise NotImplementedError()
 
 
+def entrypoint():
+    # Can't use async functions as entrypoints
+    asyncio.run(main())
+
+
 if __name__ == "__main__":
-    main()
+    entrypoint()
