@@ -136,7 +136,11 @@ class Scraper:
         for task in asyncio.as_completed(tasks):
             html = await task
             if html:
-                text = html.decode()
+                try:
+                    text = html.decode()
+                except ValueError as err:
+                    print(err)
+                    continue
                 self.extractor.feed(text)
 
         links = self.extractor.extract()
