@@ -32,6 +32,26 @@ def to_path(url: str, base: str = None) -> Path:
     return here / parts.netloc / parts.path[1:]
 
 
+def fetch(url: str) -> bytes:
+    """Given a url, fetch the resource and return it."""
+
+    try:
+        with urlopen(url) as r:
+            html = r.read()
+    except (HTTPError, URLError) as err:
+        print(f"Error fetching {url}: {err}")
+        return None
+    return html
+
+
+def store(url: str, html: bytes, base: str = None):
+    """Save a web resource to a file, optionally under the {base} directory"""
+    path = to_path(url, base)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    path.write_bytes(html)
+
+
 class LinkExtractor(HTMLParser):
     """Parses a HTML document and pulls all href attributes."""
 
@@ -71,26 +91,6 @@ class LinkExtractor(HTMLParser):
         """Returns unique links found so far."""
 
         return self.found_links
-
-
-def fetch(url: str) -> bytes:
-    """Given a url, fetch the resource and return it."""
-
-    try:
-        with urlopen(url) as r:
-            html = r.read()
-    except (HTTPError, URLError) as err:
-        print(f"Error fetching {url}: {err}")
-        return None
-    return html
-
-
-def store(url: str, html: bytes, base: str = None):
-    """Save a web resource to a file, optionally under the {base} directory"""
-    path = to_path(url, base)
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    path.write_bytes(html)
 
 
 class Scraper:
